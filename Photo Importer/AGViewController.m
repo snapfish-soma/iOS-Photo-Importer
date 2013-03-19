@@ -54,7 +54,7 @@
             homeDirectory = [homeDirectory stringByAppendingPathComponent:[activeHomeDirectoryPathComponents objectAtIndex:1]];
             homeDirectory = [homeDirectory stringByAppendingPathComponent:[activeHomeDirectoryPathComponents objectAtIndex:2]];
         }
-        homeDirectory = [homeDirectory stringByAppendingPathComponent:@"Pictures/Photo Importer"];
+        homeDirectory = [homeDirectory stringByAppendingPathComponent:@"workspace/tottenham/SeedPhotos"];
         pathTextField.text = homeDirectory;
         
         pathTextField.delegate = self;
