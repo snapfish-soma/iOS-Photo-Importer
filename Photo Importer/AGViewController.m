@@ -5,6 +5,7 @@
 //  Created by Artur Grigor on 2/13/12.
 //  Copyright (c) 2012 Universitatea "Babes-Bolyai". All rights reserved.
 //
+#import <AssetsLibrary/AssetsLibrary.h>
 
 #import "AGViewController.h"
 
@@ -17,6 +18,7 @@
 - (void)importNext;
 
 @property (nonatomic, retain) NSMutableArray *filePaths;
+@property (nonatomic, retain) ALAssetsLibrary *assetsLibrary;
 
 @end
 
@@ -24,7 +26,7 @@
 
 #pragma mark - Properties
 
-@synthesize filePaths;
+@synthesize filePaths, assetsLibrary;
 
 - (UILabel *)pathLabel
 {
@@ -83,6 +85,7 @@
     [pathLabel release];
     [pathTextField release];
     [importButton release];
+    [assetsLibrary release];
     
     [super dealloc];
 }
@@ -99,8 +102,10 @@
         numberOfPhotos = 0;
         numberOfPhotosProcessed = 0;
         numberOfErrors = 0;
-      
-      [self importAction:0];
+        
+        self.assetsLibrary = [[ALAssetsLibrary alloc] init];
+        
+        [self importAction:0];
     }
     
     return self;
@@ -209,8 +214,13 @@
 
 - (void)importNext
 {
-    UIImage *image = [UIImage imageWithContentsOfFile:[self.filePaths lastObject]];
-    UIImageWriteToSavedPhotosAlbum(image, self, @selector(image:didFinishSavingWithError:contextInfo:), nil); 
+    NSData *imageData = [NSData dataWithContentsOfFile:[self.filePaths lastObject]];
+    [self.assetsLibrary writeImageDataToSavedPhotosAlbum:imageData
+                                                metadata:@{}
+                                         completionBlock:^(NSURL *assetURL, NSError *error) {
+                                            [self image:[UIImage imageWithData:imageData] didFinishSavingWithError:error contextInfo:nil];
+                                         }
+     ];
     
     [self.filePaths removeLastObject];
 }
